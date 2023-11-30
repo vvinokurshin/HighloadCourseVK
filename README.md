@@ -556,6 +556,115 @@ Redis имеет следющие преимущества, относитель
 - CQRS: используется для разделения операций записи (команд) и операций чтения (запросов) в системе
 - Event-driven архитектура: команды добавляются в брокер сообщений, после чего асинхронно обрабатваются
 
+## Расчет ресурсов
+
+<table>
+    <thead>
+        <tr>
+            <th>Сервис</th>
+            <th>Основные запросы</th>
+            <th>RPS</th>
+            <th>CPU</th>
+            <th>RAM</th>
+            <th>Net</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan=3>Auth</td>
+            <td>Аутентификация</td>
+            <td>129000</td>
+            <td rowspan=3>1290</td>
+            <td rowspan=3>125 Гб</td>
+            <td rowspan=3>0.25 Гбит/с</td>
+        </tr>
+            <td>Авторизация</td>
+            <td>1000</td>
+        <tr>
+            <td>Регистрация</td>
+            <td>10</td>
+        </tr>
+        <tr>
+            <td>User</td>
+            <td>Добавление в корзину</td>
+            <td>45000</td>
+            <td>9</td>
+            <td>1 Гб</td>
+            <td>0.25 Гбит/с</td>
+        </tr>
+        <tr>
+            <td rowspan=2>Orders</td>
+            <td>Оформление заказа</td>
+            <td>22500</td>
+            <td rowspan=2>4</td>
+            <td rowspan=2>1 Гб</td>
+            <td rowspan=2>0.25 Гбит/с</td>
+        </tr>
+        <tr>
+            <td>Отправка заказа</td>
+            <td>800</td>
+        </tr>
+        <tr>
+          <td rowspan=4>Products</td>
+          <td>Просмотр товара</td>
+          <td>22500</td>
+          <td rowspan=4>4000</td>
+          <td rowspan=4>390 Гб</td>
+          <td rowspan=4>1 Гбит/с</td>
+        </tr>
+        <tr>
+            <td>Просмотр каталога</td>
+            <td>14000</td>
+        </tr>
+        <tr>
+            <td>Создание товара</td>
+            <td>1500</td>
+        </tr>
+        <tr>
+            <td>Поиск</td>
+            <td>1000</td>
+        </tr>
+        <tr>
+            <td rowspan=2>Review</td>
+            <td>Добавление отзыва</td>
+            <td>800</td>
+            <td rowspan=2>230</td>
+            <td rowspan=2>32 Гб</td>
+            <td rowspan=2>0.25 Гбит/с</td>
+        </tr>
+        <tr>
+            <td>Просмотр отзывов</td>
+            <td>22500</td>
+        </tr>
+        <tr>
+            <td>Statistic</td>
+            <td>Запрос статистики</td>
+            <td>22500</td>
+            <td>225</td>
+            <td>32 Гб</td>
+            <td>0.5 Гбит/с</td>
+        </tr>
+        <tr>
+            <td>nginx</td>
+            <td>-</td>
+            <td>150000</td>
+            <td>300</td>
+            <td>32 Гб</td>
+            <td>5 Гбит/с</td>
+        </tr>
+    </tbody>
+</table>
+
+| Сервис | Хостинг | Конфигурация                       | Cores | Cnt     | 
+| ------ | ------- | ---------------------------------- | ----- | ------- | 
+| nginx  | own     | 2x6430/4x8GB/1xNVMe256Gb/2x10Gb/s  | 64    | 7       | 
+| Auth   | own     | 2x6430/8x16GB/1xNVMe256Gb/2x10Gb/s  | 128    | 12       | 
+| Products | own     | 2x6430/8x64GB/1xNVMe256Gb/2x10Gb/s  | 256    | 20       | 
+| User | own     | 2x6430/2x1GB/1xNVMe256Gb/2x10Gb/s  | 8    | 4       | 
+| Orders | own     | 2x6430/2x1GB/1xNVMe256Gb/2x10Gb/s  | 8    | 4       | 
+| Review | own     | 2x6430/4x8GB/1xNVMe256Gb/2x10Gb/s  | 64    | 6       | 
+| Statistic | own     | 2x6430/4x8GB/1xNVMe256Gb/2x10Gb/s  | 64    | 6       | 
+
 ## Источники
  1. https://www.similarweb.com/ru/website/amazon.com/#traffic
  2. https://www.statista.com/statistics/271412/most-visited-us-web-properties-based-on-number-of-visitors/
